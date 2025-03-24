@@ -29,6 +29,11 @@
     <link rel="stylesheet" href="./static/css/index.css" />
     <link rel="icon" href="./static/images/favicon.svg" />
 
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
     <script defer src="./static/js/fontawesome.all.min.js"></script>
   </head>
   <body>
@@ -170,15 +175,35 @@
                   style="font-size: 0.9em; margin-top: 10px; text-align: left"
                 >
                   <strong>DITR architecture overview.</strong>
-                  We extract 2D image features from a frozen DINOv2 model (blue)
+                  We extract 2D image features from a frozen DINOv2 model
+                  <span
+                    style="
+                      display: inline-block;
+                      width: 10px;
+                      height: 10px;
+                      background-color: #dbeafe;
+                      border: 1px solid #51a2ff;
+                      border-radius: 20%;
+                    "
+                  ></span>
                   and unproject them (2D-to-3D) onto the 3D point cloud. The
                   unprojected features are subsequently max-pooled to create a
                   multi-scale feature hierarchy. The raw point cloud is fed
-                  through a 3D backbone (yellow) and the unprojected image
-                  features are added to the skip connection between the encoder
-                  $\mathcal{E}_l$ and decoder $\mathcal{D}_l$ block on each
-                  level. The model is then trained with the regular segmentation
-                  loss.
+                  through a 3D backbone
+                  <span
+                    style="
+                      display: inline-block;
+                      width: 10px;
+                      height: 10px;
+                      background-color: #FEF3C6;
+                      border: 1px solid #FFB900;
+                      border-radius: 20%;
+                    "
+                  ></span>
+                  and the unprojected image features are added to the skip
+                  connection between the encoder \(\mathcal{E}_l\) and decoder
+                  \(\mathcal{D}_l\) block on each level. The model is then
+                  trained with the regular segmentation loss.
                 </figcaption>
               </div>
             </div>
@@ -229,9 +254,7 @@
               >
                 <strong>DITR (a) and D-DITR (b).</strong> In addition to our
                 DITR injection approach, we also present D-DITR to distill
-                DINOv2 features into 3D semantic segmentation models that yields
-                state-of-the-art results across indoor and outdoor 3D
-                benchmarks.
+                DINOv2 features into 3D semantic segmentation models.
               </figcaption>
             </figure>
           </div>
