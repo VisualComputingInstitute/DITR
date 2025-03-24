@@ -309,12 +309,44 @@
     <section class="section" id="BibTeX">
       <div class="container is-max-desktop content">
         <h2 class="title">BibTeX</h2>
-        <pre><code>@article{abouzeid2025ditr,
-  title     = {DINO in the Room: Leveraging 2D Foundation Models for 3D Segmentation},
-  author    = {Abou Zeid, Karim and Yilmaz, Kadir and de Geus, Daan and Hermans, Alexander and Adrian, David and Linder, Timm and Leibe, Bastian},
-  journal   = {arXiv preprint arXiv:????},
-  year      = {2025}
+        <div style="position: relative;"></div>
+          <pre><code id="bibtex">@article{abouzeid2025ditr,
+    title   = {DINO in the Room: Leveraging 2D Foundation Models for 3D Segmentation},
+    author  = {Abou Zeid, Karim and Yilmaz, Kadir and de Geus, Daan and Hermans, Alexander and Adrian, David and Linder, Timm and Leibe, Bastian},
+    journal = {arXiv preprint arXiv:????},
+    year    = {2025}
 }</code></pre>
+          <button
+            onclick="copyToClipboard()"
+            style="
+              position: absolute;
+              top: 10px;
+              right: 10px;
+              background-color: #f3f4f6;
+              border: 1px solid #d1d5db;
+              border-radius: 5px;
+              padding: 5px 10px;
+              cursor: pointer;
+            "
+          >
+            <span style="display: flex; align-items: center; gap: 5px;">
+              <i class="far fa-copy has-text-grey" id="bibtex-copy-icon"></i> Copy
+            </span>
+          </button>
+        </div>
+        <script>
+          function copyToClipboard() {
+            const codeBlock = document.getElementById("bibtex").innerText;
+            navigator.clipboard.writeText(codeBlock).then(
+                () => {
+                const icon = document.getElementById("bibtex-copy-icon");
+                icon.classList.remove("far", "fa-copy", "has-text-grey");
+                icon.classList.add("fas", "fa-check", "has-text-success");
+                },
+              (err) => alert("Failed to copy: " + err)
+            );
+          }
+        </script>
       </div>
     </section>
 
