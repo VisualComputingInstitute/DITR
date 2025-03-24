@@ -195,8 +195,8 @@
                       display: inline-block;
                       width: 10px;
                       height: 10px;
-                      background-color: #FEF3C6;
-                      border: 1px solid #FFB900;
+                      background-color: #fef3c6;
+                      border: 1px solid #ffb900;
                       border-radius: 20%;
                     "
                   ></span>
@@ -309,7 +309,7 @@
     <section class="section" id="BibTeX">
       <div class="container is-max-desktop content">
         <h2 class="title">BibTeX</h2>
-        <div style="position: relative;"></div>
+        <div style="position: relative">
           <pre><code id="bibtex">@article{abouzeid2025ditr,
     title   = {DINO in the Room: Leveraging 2D Foundation Models for 3D Segmentation},
     author  = {Abou Zeid, Karim and Yilmaz, Kadir and de Geus, Daan and Hermans, Alexander and Adrian, David and Linder, Timm and Leibe, Bastian},
@@ -329,8 +329,9 @@
               cursor: pointer;
             "
           >
-            <span style="display: flex; align-items: center; gap: 5px;">
-              <i class="far fa-copy has-text-grey" id="bibtex-copy-icon"></i> Copy
+            <span style="display: flex; align-items: center; gap: 5px">
+              <i class="far fa-copy has-text-grey" id="bibtex-copy-icon"></i>
+              Copy
             </span>
           </button>
         </div>
@@ -338,11 +339,11 @@
           function copyToClipboard() {
             const codeBlock = document.getElementById("bibtex").innerText;
             navigator.clipboard.writeText(codeBlock).then(
-                () => {
+              () => {
                 const icon = document.getElementById("bibtex-copy-icon");
                 icon.classList.remove("far", "fa-copy", "has-text-grey");
                 icon.classList.add("fas", "fa-check", "has-text-success");
-                },
+              },
               (err) => alert("Failed to copy: " + err)
             );
           }
