@@ -1,5 +1,4 @@
-# DITR
-DINO in the Room: Leveraging 2D Foundation Models for 3D Segmentation
+# DINO in the Room: Leveraging 2D Foundation Models for 3D Segmentation (DITR)
 
 [[`arXiv`](https://arxiv.org/abs/2503.18944)] [[`Project Page`](https://vision.rwth-aachen.de/ditr)] [[`BibTeX`](#-Citation)]
 
