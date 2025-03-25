@@ -1,326 +1,259 @@
 <!DOCTYPE html>
 <html data-theme="light">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="description"
-      content="Vision foundation models (VFMs) trained on large-scale image datasets provide high-quality features that have significantly advanced 2D visual recognition. However, their potential in 3D vision remains largely untapped, despite the common availability of 2D images alongside 3D point cloud datasets. While significant research has been dedicated to 2D-3D fusion, recent state-of-the-art 3D methods predominantly focus on 3D data, leaving the integration of VFMs into 3D models underexplored. In this work, we challenge this trend by introducing DITR, a simple yet effective approach that extracts 2D foundation model features, projects them to 3D, and finally injects them into a 3D point cloud segmentation model. DITR achieves state-of-the-art results on both indoor and outdoor 3D semantic segmentation benchmarks. To enable the use of VFMs even when images are unavailable during inference, we further propose to distill 2D foundation models into a 3D backbone as a pretraining task. By initializing the 3D backbone with knowledge distilled from 2D VFMs, we create a strong basis for downstream 3D segmentation tasks, ultimately boosting performance across various datasets."
-    />
-    <meta
-      name="keywords"
-      content="DINOv2, PTv3, 3D Computer Vision, Semantic Segmentation, ScanNet, ScanNet++, S3DIS, nuScenes, SemanticKITTI, Waymo"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-      DINO in the Room: Leveraging 2D Foundation Models for 3D Segmentation
-    </title>
 
-    <link
-      href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta name="description"
+    conjtent="Vision foundation models (VFMs) trained on large-scale image datasets provide high-quality features that have significantly advanced 2D visual recognition. However, their potential in 3D vision remains largely untapped, despite the common availability of 2D images alongside 3D point cloud datasets. While significant research has been dedicated to 2D-3D fusion, recent state-of-the-art 3D methods predominantly focus on 3D data, leaving the integration of VFMs into 3D models underexplored. In this work, we challenge this trend by introducing DITR, a simple yet effective approach that extracts 2D foundation model features, projects them to 3D, and finally injects them into a 3D point cloud segmentation model. DITR achieves state-of-the-art results on both indoor and outdoor 3D semantic segmentation benchmarks. To enable the use of VFMs even when images are unavailable during inference, we further propose to distill 2D foundation models into a 3D backbone as a pretraining task. By initializing the 3D backbone with knowledge distilled from 2D VFMs, we create a strong basis for downstream 3D segmentation tasks, ultimately boosting performance across various datasets." />
+  <meta name="keywords"
+    content="DINOv2, PTv3, 3D Computer Vision, Semantic Segmentation, ScanNet, ScanNet++, S3DIS, nuScenes, SemanticKITTI, Waymo" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>
+    DINO in the Room: Leveraging 2D Foundation Models for 3D Segmentation
+  </title>
 
-    <link rel="stylesheet" href="./static/css/bulma.min.css" />
-    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
-    />
-    <link rel="stylesheet" href="./static/css/index.css" />
-    <link rel="icon" href="./static/images/favicon.svg" />
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet" />
 
-    <script
-      id="MathJax-script"
-      async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    ></script>
-    <script defer src="./static/js/fontawesome.all.min.js"></script>
-  </head>
+  <link rel="stylesheet" href="./static/css/bulma.min.css" />
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <link rel="stylesheet" href="./static/css/index.css" />
+  <link rel="icon" href="./static/images/favicon.svg" />
 
-  <body>
-    <section class="hero">
-      <div class="hero-body">
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column has-text-centered">
-              <h1 class="title is-1 publication-title">
-                DINO in the Room: Leveraging 2D Foundation Models for 3D
-                Segmentation
-              </h1>
-              <!-- <div class="title is-4 publication-title">
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+</head>
+
+<body>
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">
+              DINO in the Room: Leveraging 2D Foundation Models for 3D
+              Segmentation
+            </h1>
+            <!-- <div class="title is-4 publication-title">
                 VENUE</span>
               </div> -->
-              <div class="is-size-5 publication-authors">
-                <span class="author-block">
-                  <a href="https://ka.codes">Karim Abou Zeid</a
-                  ><sup>1</sup></span
-                >
-                <span class="author-block">
-                  <a href="https://github.com/YilmazKadir/">Kadir Yilmaz</a
-                  ><sup>1</sup>
-                </span>
-                <span class="author-block">
-                  <a href="https://daandegeus.com">Daan de Geus</a
-                  ><sup>1,2</sup>
-                </span>
-                <span class="author-block">
-                  <a
-                    href="https://scholar.google.com/citations?user=V0iMeYsAAAAJ"
-                    >Alexander Hermans</a
-                  ><sup>1</sup>
-                </span>
-                <span class="author-block">
-                  <a
-                    href="https://scholar.google.com/citations?user=vpn6QN0AAAAJ"
-                    >David Adrian</a
-                  ><sup>3</sup>
-                </span>
-                <span class="author-block">
-                  <a
-                    href="https://scholar.google.com/citations?user=s3_VpQYAAAAJ"
-                    >Timm Linder</a
-                  ><sup>3</sup>
-                </span>
-                <span class="author-block">
-                  <a
-                    href="https://scholar.google.com/citations?user=ZcULDB0AAAAJ"
-                    >Bastian Leibe</a
-                  ><sup>1</sup>
-                </span>
-              </div>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://ka.codes">Karim Abou Zeid</a><sup>1</sup></span>
+              <span class="author-block">
+                <a href="https://github.com/YilmazKadir/">Kadir Yilmaz</a><sup>1</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://daandegeus.com">Daan de Geus</a><sup>1,2</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=V0iMeYsAAAAJ">Alexander Hermans</a><sup>1</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=vpn6QN0AAAAJ">David Adrian</a><sup>3</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=s3_VpQYAAAAJ">Timm Linder</a><sup>3</sup>
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=ZcULDB0AAAAJ">Bastian Leibe</a><sup>1</sup>
+              </span>
+            </div>
 
-              <div class="is-size-5 publication-authors">
-                <span class="author-block"
-                  ><sup>1</sup>RWTH Aachen University</span
-                >
-                <span class="author-block"
-                  ><sup>2</sup>Eindhoven University of Technology</span
-                >
-                <span class="author-block"
-                  ><sup>3</sup>Bosch Center for AI</span
-                >
-              </div>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>RWTH Aachen University</span>
+              <span class="author-block"><sup>2</sup>Eindhoven University of Technology</span>
+              <span class="author-block"><sup>3</sup>Bosch Center for AI</span>
+            </div>
 
-              <div class="column has-text-centered">
-                <div class="publication-links">
-                  <!-- arXiv PDF. -->
-                  <span class="link-block">
-                    <a
-                      href="https://arxiv.org/pdf/2503.18944"
-                      class="external-link button is-normal is-rounded is-dark"
-                    >
-                      <span class="icon">
-                        <i class="fas fa-file-pdf"></i>
-                      </span>
-                      <span>Paper</span>
-                    </a>
-                  </span>
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- arXiv PDF. -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2503.18944" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span>
 
-                  <!-- arXiv abstract. -->
-                  <span class="link-block">
-                    <a
-                      href="https://arxiv.org/abs/2503.18944"
-                      class="external-link button is-normal is-rounded is-dark"
-                    >
-                      <span class="icon">
-                        <i class="ai ai-arxiv"></i>
-                      </span>
-                      <span>arXiv</span>
-                    </a>
-                  </span>
+                <!-- arXiv abstract. -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2503.18944" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
 
-                  <!-- GitHub. -->
-                  <span class="link-block">
-                    <a
-                      href="https://github.com/VisualComputingInstitute/DITR"
-                      class="external-link button is-normal is-rounded is-dark"
-                    >
-                      <span class="icon">
-                        <i class="fab fa-github"></i>
-                      </span>
-                      <span>Code (soon)</span>
-                    </a>
-                  </span>
+                <!-- GitHub. -->
+                <span class="link-block">
+                  <a href="https://github.com/VisualComputingInstitute/DITR"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code (soon)</span>
+                  </a>
+                </span>
 
-                  <!-- Hugging Face Space. -->
-                  <span class="link-block">
-                    <a
-                      href="https://huggingface.co/????"
-                      class="external-link button is-normal is-rounded is-dark"
-                    >
-                      <span class="icon">
-                        <img
-                          src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg"
-                          alt="Hugging Face Logo"
-                          style="
+                <!-- Hugging Face Space. -->
+                <span class="link-block">
+                  <a href="https://huggingface.co/????" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg"
+                        alt="Hugging Face Logo" style="
                             max-height: 24px;
                             max-width: 24px;
                             vertical-align: middle;
                             background-color: transparent;
-                          "
-                        />
-                      </span>
-                      <span>Weights (soon)</span>
-                    </a>
-                  </span>
-                </div>
+                          " />
+                    </span>
+                    <span>Weights (soon)</span>
+                  </a>
+                </span>
               </div>
+            </div>
 
-              <div class="image-container has-text-centered">
-                <img
-                  src="static/img/method.webp"
-                  alt="Teaser Image"
-                  style="max-width: 100%; height: auto"
-                />
-                <figcaption
-                  style="font-size: 0.9em; margin-top: 10px; text-align: left"
-                >
-                  <strong>DITR architecture overview.</strong>
-                  We extract 2D image features from a frozen DINOv2 model
-                  <span
-                    style="
+            <div class="image-container has-text-centered">
+              <img src="static/img/method.webp" alt="Teaser Image" style="max-width: 100%; height: auto" />
+              <figcaption style="font-size: 0.9em; margin-top: 10px; text-align: left">
+                <strong>DITR architecture overview.</strong>
+                We extract 2D image features from a frozen DINOv2 model
+                <span style="
                       display: inline-block;
                       width: 10px;
                       height: 10px;
                       background-color: #dbeafe;
                       border: 1px solid #51a2ff;
                       border-radius: 20%;
-                    "
-                  ></span>
-                  and unproject them (2D-to-3D) onto the 3D point cloud. The
-                  unprojected features are subsequently max-pooled to create a
-                  multi-scale feature hierarchy. The raw point cloud is fed
-                  through a 3D backbone
-                  <span
-                    style="
+                    "></span>
+                and unproject them (2D-to-3D) onto the 3D point cloud. The
+                unprojected features are subsequently max-pooled to create a
+                multi-scale feature hierarchy. The raw point cloud is fed
+                through a 3D backbone
+                <span style="
                       display: inline-block;
                       width: 10px;
                       height: 10px;
                       background-color: #fef3c6;
                       border: 1px solid #ffb900;
                       border-radius: 20%;
-                    "
-                  ></span>
-                  and the unprojected image features are added to the skip
-                  connection between the encoder \(\mathcal{E}_l\) and decoder
-                  \(\mathcal{D}_l\) block on each level. The model is then
-                  trained with the regular segmentation loss.
-                </figcaption>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered has-text-centered is-6">
-          <div class="column">
-            <h2 class="title is-3">Abstract</h2>
-            <div class="content has-text-justified">
-              <p>
-                Vision foundation models (VFMs) trained on large-scale image
-                datasets provide high-quality features that have significantly
-                advanced 2D visual recognition. However, their potential in 3D
-                vision remains largely untapped, despite the common availability
-                of 2D images alongside 3D point cloud datasets. While
-                significant research has been dedicated to 2D-3D fusion, recent
-                state-of-the-art 3D methods predominantly focus on 3D data,
-                leaving the integration of VFMs into 3D models underexplored. In
-                this work, we challenge this trend by introducing DITR, a simple
-                yet effective approach that extracts 2D foundation model
-                features, projects them to 3D, and finally injects them into a
-                3D point cloud segmentation model. DITR achieves
-                state-of-the-art results on both indoor and outdoor 3D semantic
-                segmentation benchmarks. To enable the use of VFMs even when
-                images are unavailable during inference, we further propose to
-                distill 2D foundation models into a 3D backbone as a pretraining
-                task. By initializing the 3D backbone with knowledge distilled
-                from 2D VFMs, we create a strong basis for downstream 3D
-                segmentation tasks, ultimately boosting performance across
-                various datasets.
-              </p>
-            </div>
-          </div>
-          <div class="column has-text-centered">
-            <figure style="max-width: 100%; margin: 0 auto">
-              <img
-                src="static/img/teaser.webp"
-                alt="Inference Pipeline"
-                style="width: 100%; height: auto"
-              />
-              <figcaption
-                style="font-size: 0.9em; margin-top: 10px; text-align: left"
-              >
-                <strong>DITR (a) and D-DITR (b).</strong> In addition to our
-                DITR injection approach, we also present D-DITR to distill
-                DINOv2 features into 3D semantic segmentation models.
+                    "></span>
+                and the unprojected image features are added to the skip
+                connection between the encoder \(\mathcal{E}_l\) and decoder
+                \(\mathcal{D}_l\) block on each level. The model is then
+                trained with the regular segmentation loss.
               </figcaption>
-            </figure>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h2 class="title is-4">DITR Quantiative Results</h2>
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered is-6">
+        <div class="column">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Vision foundation models (VFMs) trained on large-scale image
+              datasets provide high-quality features that have significantly
+              advanced 2D visual recognition. However, their potential in 3D
+              vision remains largely untapped, despite the common availability
+              of 2D images alongside 3D point cloud datasets. While
+              significant research has been dedicated to 2D-3D fusion, recent
+              state-of-the-art 3D methods predominantly focus on 3D data,
+              leaving the integration of VFMs into 3D models underexplored. In
+              this work, we challenge this trend by introducing DITR, a simple
+              yet effective approach that extracts 2D foundation model
+              features, projects them to 3D, and finally injects them into a
+              3D point cloud segmentation model. DITR achieves
+              state-of-the-art results on both indoor and outdoor 3D semantic
+              segmentation benchmarks. To enable the use of VFMs even when
+              images are unavailable during inference, we further propose to
+              distill 2D foundation models into a 3D backbone as a pretraining
+              task. By initializing the 3D backbone with knowledge distilled
+              from 2D VFMs, we create a strong basis for downstream 3D
+              segmentation tasks, ultimately boosting performance across
+              various datasets.
+            </p>
           </div>
         </div>
-        <div class="columns is-centered is-6">
-          <div class="column has-text-centered">
-            <figure style="max-width: 100%; margin: 0 auto">
-              <img src="static/img/table1.webp" />
-            </figure>
-          </div>
-          <div class="column has-text-centered">
-            <figure style="max-width: 100%; margin: 0 auto">
-              <img src="static/img/table2.webp" />
-            </figure>
-          </div>
+        <div class="column has-text-centered">
+          <figure style="max-width: 100%; margin: 0 auto">
+            <img src="static/img/teaser.webp" alt="Inference Pipeline" style="width: 100%; height: auto" />
+            <figcaption style="font-size: 0.9em; margin-top: 10px; text-align: left">
+              <strong>DITR (a) and D-DITR (b).</strong> In addition to our
+              DITR injection approach, we also present D-DITR to distill
+              DINOv2 features into 3D semantic segmentation models.
+            </figcaption>
+          </figure>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h2 class="title is-4">D-DITR Quantiative Results</h2>
-          </div>
-        </div>
-        <div class="columns is-centered is-6">
-          <div class="column has-text-centered">
-            <figure style="max-width: 100%; margin: 0 auto">
-              <img src="static/img/table3.webp" />
-            </figure>
-          </div>
-          <div class="column has-text-centered">
-            <figure style="max-width: 100%; margin: 0 auto">
-              <img src="static/img/table4.webp" />
-            </figure>
-          </div>
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h2 class="title is-4">DITR Quantiative Results</h2>
         </div>
       </div>
-    </section>
+      <div class="columns is-centered is-6">
+        <div class="column has-text-centered">
+          <figure style="max-width: 100%; margin: 0 auto">
+            <img src="static/img/table1.webp" />
+          </figure>
+        </div>
+        <div class="column has-text-centered">
+          <figure style="max-width: 100%; margin: 0 auto">
+            <img src="static/img/table2.webp" />
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <section class="section" id="BibTeX">
-      <div class="container is-max-desktop content">
-        <h2 class="title">BibTeX</h2>
-        <div style="position: relative">
-          <pre><code id="bibtex">@article{abouzeid2025ditr,
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h2 class="title is-4">D-DITR Quantiative Results</h2>
+        </div>
+      </div>
+      <div class="columns is-centered is-6">
+        <div class="column has-text-centered">
+          <figure style="max-width: 100%; margin: 0 auto">
+            <img src="static/img/table3.webp" />
+          </figure>
+        </div>
+        <div class="column has-text-centered">
+          <figure style="max-width: 100%; margin: 0 auto">
+            <img src="static/img/table4.webp" />
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <div style="position: relative">
+        <pre><code id="bibtex">@article{abouzeid2025ditr,
             title = {DINO in the Room: Leveraging 2D Foundation Models for 3D Segmentation},
             author = {Abou Zeid, Karim and Yilmaz, Kadir and de Geus, Daan and Hermans, Alexander and Adrian, David and
             Linder, Timm and Leibe, Bastian},
             journal = {arXiv preprint arXiv:2503.18944},
             year = {2025}
             }</code></pre>
-          <button
-            onclick="copyToClipboard()"
-            style="
+        <button onclick="copyToClipboard()" style="
               position: absolute;
               top: 10px;
               right: 10px;
@@ -329,48 +262,45 @@
               border-radius: 5px;
               padding: 5px 10px;
               cursor: pointer;
-            "
-          >
-            <span style="display: flex; align-items: center; gap: 5px">
-              <i class="far fa-copy has-text-grey" id="bibtex-copy-icon"></i>
-              Copy
-            </span>
-          </button>
-        </div>
-        <script>
-          function copyToClipboard() {
-            const codeBlock = document.getElementById("bibtex").innerText;
-            navigator.clipboard.writeText(codeBlock).then(
-              () => {
-                const icon = document.getElementById("bibtex-copy-icon");
-                icon.classList.remove("far", "fa-copy", "has-text-grey");
-                icon.classList.add("fas", "fa-check", "has-text-success");
-              },
-              (err) => alert("Failed to copy: " + err)
-            );
-          }
-        </script>
+            ">
+          <span style="display: flex; align-items: center; gap: 5px">
+            <i class="far fa-copy has-text-grey" id="bibtex-copy-icon"></i>
+            Copy
+          </span>
+        </button>
       </div>
-    </section>
+      <script>
+        function copyToClipboard() {
+          const codeBlock = document.getElementById("bibtex").innerText;
+          navigator.clipboard.writeText(codeBlock).then(
+            () => {
+              const icon = document.getElementById("bibtex-copy-icon");
+              icon.classList.remove("far", "fa-copy", "has-text-grey");
+              icon.classList.add("fas", "fa-check", "has-text-success");
+            },
+            (err) => alert("Failed to copy: " + err)
+          );
+        }
+      </script>
+    </div>
+  </section>
 
-    <footer class="footer">
-      <div class="container">
-        <div class="columns is-centered">
-          <div class="column is-8">
-            <div class="content has-text-centered">
-              <p>
-                This website is licensed under
-                <a
-                  rel="license"
-                  href="http://creativecommons.org/licenses/by-sa/4.0/"
-                  >CC BY-SA 4.0</a
-                >. It is based on the
-                <a href="https://nerfies.github.io/">Nerfies website</a>.
-              </p>
-            </div>
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content has-text-centered">
+            <p>
+              This website is licensed under
+              <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. It is based on
+              the
+              <a href="https://nerfies.github.io/">Nerfies website</a>.
+            </p>
           </div>
         </div>
       </div>
-    </footer>
-  </body>
+    </div>
+  </footer>
+</body>
+
 </html>
