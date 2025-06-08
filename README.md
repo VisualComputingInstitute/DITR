@@ -11,6 +11,10 @@
 
 🚧 Code will follow soon
 
+## 📢 News
+- 2025-05-27: Winner of the [CVPR 2025 ScanNet++ challenge](https://kaldir.vc.in.tum.de/scannetpp/cvpr2025).
+- 2024-05-27: Accepted to [CVPR 2025 T4V Workshop](https://sites.google.com/view/t4v-cvpr25/).
+
 ## 🎓 Citation
 
 If you use our work in your research, please use the following BibTeX entry.
